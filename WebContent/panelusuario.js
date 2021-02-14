@@ -41,16 +41,17 @@ $(document).ready(function(){
 			success: function(result){ 
 				let reservas= JSON.parse(result); //convierto el JSON devuelto a una lista
 				//html = variable que almacena una cadena correspondiente a la construccion de la tabla que se va a mostrar en el panel
-				let html="<table ><thead><tr><td>Titulo</td><td>Genero</td><td>Estreno</td><td>Fecha del alquiler</td></tr><thead><tbody>";
+				let html="<table ><thead><tr><td>Titulo</td><td>Genero</td><td>Estreno</td><td>Fecha del alquiler</td><td></td></tr><thead><tbody>";
 				
 				//Añado una fila a la cadena correspondiente con la película
 				for (let i=0; i<reservas.length; i++){
+					let id = reservas[i]["id"];
 					let titulo = reservas[i]["titulo"];
 					let genero = reservas[i]["genero"];
 					let estreno = reservas[i]["estreno"];
 					let fecha = reservas[i]["fecha"];
 			
-					html+="<tr><td>"+titulo+"</td><td>"+genero+"</td><td >"+estreno+"</td><td>"+fecha+"</td></tr>";
+					html+="<tr><td>"+titulo+"</td><td>"+genero+"</td><td >"+estreno+"</td><td>"+fecha+"</td><td><button id="+id+" onclick=devolver(this.id) class=\"btn btn-warning\">Devolver Película</button></td></tr>";
 				}
 					
 				$("#reservas").html(html); //muestro la tabla
@@ -145,3 +146,22 @@ $(document).ready(function(){
 			document.location.href="web.html?username="+usuariologueado;
 		})
 })
+
+function devolver(idpelicula){
+	$.ajax({
+	    type:"POST",
+		dataType:"html",
+		url: "./ServletDevolucion",
+		data:$.param({
+			id:idpelicula,
+			usuario:usuariologueado,
+		}),
+		success: function(result){
+			alert(result);
+		},
+		error: function(){
+		 	alert("Error durante la acción")
+		}
+	});
+	
+}

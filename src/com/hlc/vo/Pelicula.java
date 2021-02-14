@@ -1,5 +1,6 @@
 package com.hlc.vo;
 
+/*Modelación de las películas*/
 public class Pelicula {
 	private String id;
 	private String titulo;
@@ -7,7 +8,7 @@ public class Pelicula {
 	private String actorppal;
 	private int copiasdisponibles;
 	private boolean estreno;
-	private float precio; //podria ser int pero lo pongo así por la rebaja 
+	private float precio; //podria ser int pero lo pongo así por la rebaja que se puede realizar al ser premium
 	
 	public Pelicula() {}
 	
@@ -18,7 +19,7 @@ public class Pelicula {
 		this.actorppal=actorppal;
 		this.copiasdisponibles=copiasdisponibles;
 		this.estreno=estreno;
-		this.precio=calcularprecio(estreno); //llamo a una funcion para que ponga el precio de alquiler 
+		this.precio=calcularprecio(estreno); //llamo a una funcion propia de la clase para que ponga el precio de alquiler 
 	}
 	
 	//en caso de que la pelicula sea de estreno, el precio va a ser 2 y por el contrario de 1

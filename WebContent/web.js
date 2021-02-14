@@ -57,12 +57,11 @@ function reservar(id){
 				idpelicula: id,
 			}),
 			success:function(result){
-				alert(result);
 				if(result=="true"){
 					alert("Pelicula alquilada con éxito");
 				}
 				else{
-					alert("Error en el alquiler de la película. Compruebe su crédito")
+					alert("Error en el alquiler de la película.")
 				}
 				
 			},

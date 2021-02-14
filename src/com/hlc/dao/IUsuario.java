@@ -1,5 +1,6 @@
 package com.hlc.dao;
 
+//Interfaz con todos los métodos necesarios referentes al propio usuario
 public interface IUsuario {
 	public String comprobarinicio(String nombreusuario, String clave);
 	public String registrarusuario(String nombreusuario, String clave, String nombre, String apellidos, String email, float saldo, Boolean premium);

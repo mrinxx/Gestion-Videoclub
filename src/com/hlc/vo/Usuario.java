@@ -1,5 +1,6 @@
 package com.hlc.vo;
 
+/*Modelación de los usuarios*/
 public class Usuario {
 	private String nombreusuario;
 	private String clave;

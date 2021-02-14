@@ -13,22 +13,27 @@ import com.hlc.vo.Alquiler;
 public class UsuarioDAO implements IUsuario {
 
 	@Override
+	/*Método que se va a utilizar cuando el usuario inicie sesión, para ver si los datos son o no correctos*/
 	public String comprobarinicio(String nombreusuario, String clave) {
 		// TODO Auto-generated method stub
 		DBConnection con = new DBConnection();
-		String sql="Select * from usuarios where nombreusuario='"+nombreusuario+"'and clave='"+clave+"'"; 
-		Boolean encontrado=false;
+		String sql="Select * from usuarios where nombreusuario='"+nombreusuario+"'and clave='"+clave+"'";  //búsqueda del usuario en la BD
+		Boolean encontrado=false; //Booleano que indicará si el usuario está o no en la BD
 		try {
 			Statement st = con.getConnection().createStatement(); 
 			ResultSet rs = st.executeQuery(sql);
+			/*De lo que devuelve la consulta, se va a coger el nombre de usuario y la clave (aunque no haya datos en ellos lo devuelve pero vacio)*/
 			while(rs.next()) {
 			String nombre_usu= rs.getString("nombreusuario");
 			String pass= rs.getString("clave");
+			/*En caso de que los datos coincidan con los que se han pasado como parámetros desde el inicio de sesión, significará que los datos son correctos
+			 * y la variable encontrado cambia su valor para dejar constancia de que el usuario es correcto*/
 			if(nombre_usu.equals(nombreusuario) && pass.equals(clave)) {
 				encontrado=true;
 				}
 			}
 			st.close();
+			//En caso del valor de encontrado, se devolverá ok (si se encuentra) o not ok ("si no se encuentra")
 			if(encontrado) {
 				return "ok";
 			}else {
@@ -47,11 +52,12 @@ public class UsuarioDAO implements IUsuario {
 	}
 
 	@Override
+	/*Método que va a ser utilizado en el momento en el que se vaya a registrar un usuario*/
 	public String registrarusuario(String nombreusuario, String clave, String nombre, String apellidos, String email, float saldo, Boolean premium) {
 		// TODO Auto-generated method stub
 		DBConnection con = new DBConnection();
-		String mensaje="";
-		String sqlcomprobacionusuario="SELECT * from usuarios";
+		String mensaje=""; //mensaje que se va a devolver al final de la funcion
+		String sqlcomprobacionusuario="SELECT * from usuarios"; //Se cojen todos los datos de los usuarios
 		Boolean valido=true; //para ver si el usuario es válido
 		try {
 			Statement stcomprobacionusuario = con.getConnection().createStatement(); 
@@ -64,41 +70,45 @@ public class UsuarioDAO implements IUsuario {
 				}
 			}
 			stcomprobacionusuario.close();
-			}
-			catch(Exception e) {
-				return(e.getMessage());
-			}
-
+			/*En caso de que el usuario sea válido se procederá a insertarlo en la BD como un nuevo usuario de la aplicación*/
 			if(valido) {
-				try {
-					String sql ="Insert into usuarios(nombreusuario,clave,nombre,apellidos,email,saldo,premium) VALUES('" +nombreusuario+"','" +clave+"','" +nombre+"','"+apellidos+"','"+email+"',"+saldo+",'"+premium+"')";
-					Statement st = con.getConnection().createStatement(); 
-					ResultSet rs = st.executeQuery(sql);
-					st.close();
-					mensaje="ok";
-				}catch(Exception e) {
-					return(e.getMessage());
-				}
+				String sql ="Insert into usuarios(nombreusuario,clave,nombre,apellidos,email,saldo,premium) VALUES('" +nombreusuario+"','" +clave+"','" +nombre+"','"+apellidos+"','"+email+"',"+saldo+",'"+premium+"')";
+				Statement st = con.getConnection().createStatement(); 
+				ResultSet rs = st.executeQuery(sql);
+				st.close();
+				mensaje="ok"; //se establece el mensaje que se va a devolver como ok
 			}else{
-				mensaje="not ok";
-			}
+				mensaje="not ok"; //mensaje pasa a ser not ok ya que el usuario no era valido
+				}
 			
 			return mensaje;
-		}
+			}
+			catch(Exception e) {
+				return e.getMessage();
+			}finally {
+				con.desconectar();
+			}
+	 }
+
+			
 
 	@Override
+	/*Método para usarse en el momento de ver las reservas de un determinado usuaario en el panel del mismo*/
 	public String verReservas(String nombreusuario) {
 		// TODO Auto-generated method stub
 		Gson json= new Gson(); 
 		DBConnection con = new DBConnection();
-		String sql ="Select * from alquileres alq, peliculas p where alq.pelicula=p.id and alq.usuario LIKE '"+nombreusuario+"'";
+		String sql ="Select * from alquileres alq, peliculas p where alq.pelicula=p.id and alq.usuario LIKE '"+nombreusuario+"'"; //Seleccion de los alquileres relacionados con el usuario 
 		try {
 			
-			ArrayList<Alquiler> datos= new ArrayList<Alquiler>();
+			ArrayList<Alquiler> datos= new ArrayList<Alquiler>(); //ArrayList que va a almacenar los alquileres del usuario
 			
 			Statement st = con.getConnection().createStatement();
 			ResultSet rs = st.executeQuery(sql);
+			
+			//Se cogen los datos necesarios 
 			while(rs.next()) {
+				String id=rs.getString("id");
 				String fecha=rs.getString("fecha_alquiler");
 				String titulo= rs.getString("titulo"); 
 				String genero= rs.getString("genero"); 
@@ -115,13 +125,13 @@ public class UsuarioDAO implements IUsuario {
 				}else if(cadenaestreno.equals("false")) {
 					estreno="No";
 				}
-				Alquiler alquiler=new Alquiler(fecha,titulo,genero,estreno); //uso esta clase para poder enviar los datos
-				datos.add(alquiler);
+				Alquiler alquiler=new Alquiler(id,fecha,titulo,genero,estreno); //uso esta clase para poder enviar los datos
+				datos.add(alquiler); //añado el alquiler a los datos que se van a devolver
 				
 			}
 			
 		st.close();
-		return json.toJson(datos); 
+		return json.toJson(datos); //devuelvo la lista de los datos en JSON 
 		}catch(Exception e){
 			System.out.println(e.getMessage());
 			return e.getMessage();
@@ -131,14 +141,16 @@ public class UsuarioDAO implements IUsuario {
 	}
 
 	@Override
+	/*Método que se utilizará en el momento de modificar los datos de un usuario desde su panel de usuario*/
 	public String modificarUsuario(String nombreusuario, String nombre,String apellidos,String clave,String email) {
 		// TODO Auto-generated method stub
 		DBConnection con = new DBConnection();
-		String sqldatos="select * from usuarios where nombreusuario LIKE '"+nombreusuario+"'";
+		String sqldatos="select * from usuarios where nombreusuario LIKE '"+nombreusuario+"'"; //selecciono los datos actuales del usuario
 		
 		try {
 			Statement st = con.getConnection().createStatement();
 			ResultSet rs = st.executeQuery(sqldatos);
+			//Las siguientes variables guardarán los datos del usuario que tienen en la base de datos 
 			String nombrebd="";
 			String apellidosbd=""; 
 			String clavebd= ""; 
@@ -150,6 +162,8 @@ public class UsuarioDAO implements IUsuario {
 				emailbd=rs.getString("email");
 			}
 			
+			//en caso de que algunos de los campos de ese formulario NO estén completos, se pondrán los datos que ya se tenían en la BD relacionados con el mismo
+			//si esto no se hiciese así, quedarían datos en blanco
 			if(nombre.equals("")) {
 				nombre=nombrebd;
 			}
@@ -166,9 +180,9 @@ public class UsuarioDAO implements IUsuario {
 			st.close();
 			String sqlmodificacion="Update usuarios SET nombre='"+nombre+"', apellidos='"+apellidos+"',clave='"+clave+"', email='"+email+"' where nombreusuario LIKE '"+nombreusuario+"'";
 			Statement stmodificacion = con.getConnection().createStatement();
-			stmodificacion.executeQuery(sqlmodificacion);
+			stmodificacion.executeQuery(sqlmodificacion); //se modifica el usuario 
 			stmodificacion.close();
-			return "Datos modificados correctamente";
+			return "Datos modificados correctamente"; //se devuelve para mostrarse en la web este mensaje
 		}catch(Exception e){
 			return e.getMessage();
 		}finally{
@@ -177,14 +191,15 @@ public class UsuarioDAO implements IUsuario {
 	}
 
 	@Override
+	/*Método para eliminar al usuario al pulsar el botón especifico para ello desde la BD*/
 	public String eliminarUsuario(String nombreusuario) {
 		// TODO Auto-generated method stub
 		DBConnection con = new DBConnection();
-		String sql ="DELETE from usuarios where nombreusuario LIKE '"+nombreusuario+"'";
+		String sql ="DELETE from usuarios where nombreusuario LIKE '"+nombreusuario+"'"; //Sentencia para eliminar al usuario pasado como parámetro de la BD
 		try {
 			Statement st = con.getConnection().createStatement();
 			st.executeQuery(sql);
-			return "Usuario eliminado correctamente";
+			return "Usuario eliminado correctamente";  //mensaje que se devuelve para mostrar en la web
 		}catch(Exception e) {
 			return e.getMessage();
 		}finally {
@@ -193,19 +208,20 @@ public class UsuarioDAO implements IUsuario {
 	}
 
 	@Override
+	/*Método que se va a usar para comprobar el saldo del usuario que esté logueado nada más entrar en el panel del usuario*/
 	public String comprobarSaldo(String nombreusuario) {
 		// TODO Auto-generated method stub
 		DBConnection con = new DBConnection();
-		String sql ="SELECT saldo from usuarios where nombreusuario LIKE '"+nombreusuario+"'";
-		String saldo="";
+		String sql ="SELECT saldo from usuarios where nombreusuario LIKE '"+nombreusuario+"'"; //consulta para obtener el saldo
+		String saldo=""; //almacenará el saldo. Lo hago como un string ya que en el lugar donde se va a visualizar en la web, es un h2 y por lo tanto lo pongo como cadena de texto
 		try {
 			Statement st = con.getConnection().createStatement();
 			ResultSet rs=st.executeQuery(sql);
 			while(rs.next()) {
-				saldo=Float.toString(rs.getFloat("saldo"));
+				saldo=Float.toString(rs.getFloat("saldo")); //cojo el saldo de la consulta y haco la conversion de float a string
 			}
 			st.close();
-			return saldo;
+			return saldo; //devuelvo el dato obtenido
 		}catch(Exception e) {
 			return e.getMessage();
 		}finally {
@@ -215,17 +231,18 @@ public class UsuarioDAO implements IUsuario {
 	}
 
 	@Override
+	/*Método para modificar el saldo de un determinado usuario . Recibe el usuario a modificar, el saldo que tiene y la cantidad que se le va a añadir a dicho saldo*/
 	public String modificarSaldo(String nombreusuario, float saldo,float asumar) {
 		// TODO Auto-generated method stub
 		DBConnection con = new DBConnection();
-		System.out.println(saldo+asumar);
+		//Consulta de modificación en la que se establece el saldo del usuario como la suma de la cantidad original+la cantidad que se añade desde el formulario
 		String sql ="UPDATE usuarios SET saldo ="+(saldo+asumar)+" where nombreusuario LIKE '"+nombreusuario+"'";
 
 		try {
 			Statement st = con.getConnection().createStatement();
 			st.executeQuery(sql);
 			st.close();
-			return "Saldo modificado exitosamente";
+			return "Saldo modificado exitosamente"; //devuelvo el mensaje a mostrar en la web
 		}catch(Exception e) {
 			return e.getMessage();
 		}finally {
