@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="./registro.js"></script>
+<title>Registro de usuario</title>
+</head>
+<body>
+	<nav>
+	<h1>Formulario de registro</h1>
+	<a  href="index.html" class="btn btn-warning" id="btnatras">Atrás</a>
+	</nav>
+	
+		<div id="respuesta" class="alert alert-danger" role="alert"></div>
+	
+	<form class="form-group">
+	<fieldset>
+	<legend>Datos personales</legend>
+		Nombre:<input type="text" id="nombre" class="form-control" required/><br><br>
+		Apellidos: <input type="text" id="apellidos" class="form-control" required/><br><br>
+		Correo electrónico: <input type="email" id="correo" class="form-control" required /><br><br>
+	</fieldset>
+	<fieldset>
+		<legend>Datos de usuario</legend>
+		 Nombre de usuario: <input type="text" id="nombreusuario" class="form-control" required/><br><br>
+		Contraseña: <input type="password" id="pass" class="form-control" required/><br><br>
+		Introduzca el saldo inicial: <input type="number" min=0 class="form-control" id="saldo"/>
+		<small id="emailHelp" class="form-text text-muted">**Si no desea añadir saldo, indique 0</small><br><br>
+		Marca esta casilla en caso de querer ser usuario premium <input type="checkbox" id="eleccion">
+		<small id="premiumhelp" class="form-text text-muted">**Si eres usuario premium disfrutarás de ventajas por el precio de 2.95€/mes</small>
+	</fieldset><br>	
+		
+	</form>
+	<button class="btn btn-success" id="btnregistro" >Enviar</button>
+</body>
+</html>
