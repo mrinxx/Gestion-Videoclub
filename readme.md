@@ -17,10 +17,17 @@ Tecnologías utilizadas en el proyecto:
 * [MariaDB](https://mariadb.org): Version 10.5.8
 
 ## Instalación
-***
-Para descargar este proyecto solo tienes que descargar el .zip o clonar el repositorio de la siguiente manera:
-```
-$ git clone https://github.com/mrinxx/Gestion-Videoclub.git
-```
-Lo siguiente será:  Importar a IDE de Java > Lanzar el servidor
+1. Clonar el repositorio:
+    Para descargar este proyecto solo tienes que descargar el .zip o clonar el repositorio de la siguiente manera:
+    ```
+    $ git clone https://github.com/mrinxx/Gestion-Videoclub.git
+    ```
+    > Para que funcione, tiene que estar instalado [el cliente de línea de comandos de Git](https://git-scm.com/downloads).
+
+2. Crear la base de datos referente al proyecto en MariaDB:
+    >Para descargar [MariaDb](https://mariadb.org)
+
+3. Importar el proyecto en el IDE utilizado para programar con Java.
+4. Lanzar el servidor Tomcat vinculado al proyecto.
+    >Para descargar [Tomcat](http://tomcat.apache.org)
 ***
