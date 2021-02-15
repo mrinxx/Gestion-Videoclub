@@ -32,11 +32,12 @@ public class ServletInicioSesion extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		UsuarioDAO usuario = new UsuarioDAO();
+		//Se cogen el nombre de usuario y clave que han llegado a través de la request y que han sido cogidos del inicio de sesión
 		String nombreusuario=request.getParameter("nombreusuario");
 		String clave=request.getParameter("clave");
 
 		
-		String ret = usuario.comprobarinicio(nombreusuario,clave);
+		String ret = usuario.comprobarinicio(nombreusuario,clave); //se comprueba si son válidos 
 		response.setContentType("text/html;charset=UTF-8");
 		System.out.println(ret);
 		PrintWriter out = response.getWriter();

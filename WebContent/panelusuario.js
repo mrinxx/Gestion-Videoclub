@@ -3,9 +3,8 @@
  */
 
 var url=window.location;
-var parametros=url.toString().split('?');
-var usuario=parametros[1].split('=');
-let usuariologueado=usuario[1]; //usuario que se ha logueado. Pasado desde el index
+var usuario=url.toString().split('=');
+let usuariologueado=usuario[1]; 
 
 //esta variable va a almacenar el saldo más alto que tiene un usuario. Con ello se consigue que al modificar no se pueda
 //meter menos saldo del que ya se tiene.
@@ -26,7 +25,7 @@ $(document).ready(function(){
 				$("#saldodisponible").html("Saldo Disponible:"+parseFloat(result)+" euros"); //si la operación es exitosa se muestra donde corresponde
 			},
 			error: function(){
-				alert("Problemas al cargar la página"); //problemas -> error en la carga
+				muestrainfo("error","Error durante la carga de la página");
 			}
 			})
 	
@@ -40,32 +39,41 @@ $(document).ready(function(){
 			}),
 			success: function(result){ 
 				let reservas= JSON.parse(result); //convierto el JSON devuelto a una lista
-				//html = variable que almacena una cadena correspondiente a la construccion de la tabla que se va a mostrar en el panel
-				let html="<table ><thead><tr><td>Titulo</td><td>Genero</td><td>Estreno</td><td>Fecha del alquiler</td><td></td></tr><thead><tbody>";
 				
-				//Añado una fila a la cadena correspondiente con la película
-				for (let i=0; i<reservas.length; i++){
-					let id = reservas[i]["id"];
-					let titulo = reservas[i]["titulo"];
-					let genero = reservas[i]["genero"];
-					let estreno = reservas[i]["estreno"];
-					let fecha = reservas[i]["fecha"];
-			
-					html+="<tr><td>"+titulo+"</td><td>"+genero+"</td><td >"+estreno+"</td><td>"+fecha+"</td><td><button id="+id+" onclick=devolver(this.id) class=\"btn btn-warning\">Devolver Película</button></td></tr>";
-				}
+				//En caso de que el usuario no haya realizado ninguna reserva, se mostrará una alerta indicandolo.
+				if(reservas.length==0){
+					$("#reservas").html("<div class=\"alert alert-secondary\" role=\"alert\">Aún no se ha realizado ningún alquiler</div>");
+				}else{
+					//En caso de que si se hayan realizado reservas:
+					//html = variable que almacena una cadena correspondiente a la construccion de la tabla que se va a mostrar en el panel
+					let html="<table class=\"table table-hover\"><thead class=\"thead-dark\"><tr><th scope=\"col\">Titulo</th><th scope=\"col\">Genero</th><th scope=\"col\">Estreno</th><th scope=\"col\">Fecha del alquiler</th><th></th></tr><thead><tbody>";
 					
-				$("#reservas").html(html); //muestro la tabla
+					//Añado una fila a la cadena correspondiente con la película
+					for (let i=0; i<reservas.length; i++){
+						let id = reservas[i]["id"];
+						let titulo = reservas[i]["titulo"];
+						let genero = reservas[i]["genero"];
+						let estreno = reservas[i]["estreno"];
+						let fecha = reservas[i]["fecha"];
+						
+						html+="<tr><th scope=\"row\">"+titulo+"</th><td>"+genero.toUpperCase()+"</td><td >"+estreno+"</td><td>"+fecha+"</td><td><button id="+id+" onclick=devolver(this.id) class=\"btn btn-success\">Devolver Película</button></td></tr>";
+						//NOTA: El id del botón es el id de la película que se va a devolver y el cual se coge desde los datos devueltos por el servlet. Esto es así ya que 
+						//directamente puedo saber la película a la que se esta refiriendo esa fila de la tabla
+					}
+					$("#reservas").html(html); //muestro la tabla en el espacio reservado para ello
+				}
+	
 			},
 			error: function(){
-				alert("Error durante la carga de la página"); 
+				muestrainfo("error","Error durante la carga de la página");
 		}
 		})
-		// + -> El usuario puede modificar su saldo siempre y cuando sea mayor de 0
+		// + -> El usuario puede modificar su saldo siempre y cuando sea con una cantidad igual o mayor a 0.50€ 
 		$("#btnmodificarsaldo").click(function(){
-			var saldo=$("#addsaldo").val();
-			var saldoactual=auxsaldo;
-			if(parseFloat(saldo)<0.50){ //En caso de que el saldo no sea como mínimo céntimos
-				alert("Error al modificar el saldo. Cantidad mínima a introducir: 0.50€ ");
+			var saldo=$("#addsaldo").val(); 
+			var saldoactual=auxsaldo; //el saldo actual realmente es el que está almacenado en auxsaldo
+			if(parseFloat(saldo)<0.50){ //En caso de que el saldo no sea como mínimo 0.50 céntimos
+				muestrainfo("error","Error al modificar el saldo. Cantidad mínima a introducir: 0.50€ ");
 			}else{
 				$.ajax({
 					type:"POST",
@@ -77,24 +85,29 @@ $(document).ready(function(){
 						cantidadasumar:parseFloat(saldo)
 					}),
 					success: function(result){
-						auxsaldo=saldo;
-						alert(result);
-						$("#saldodisponible").val(saldo);
+						auxsaldo=saldo; //se actualiza el valor de auxsaldo
+						//se recarga la página tras 2 segundos
+						setTimeout("document.location.href=\"panelusuario.html?username=\"+usuariologueado;", 2000); //esto lo que hace es recargar la pagina a los dos segundos
+						muestrainfo("correcto",result); //se mostrará el mensaje de que la acción ha sido correcta
+						$("#saldodisponible").val(saldo); //se cambia el valor del saldo disponible que aparece en la pantalla
 					
 					},
 					error: function(){
-						alert("Error durante la acción")
+						muestrainfo("error","Error durante la operación");
 					}
 				});
 			}
 		})
+		//Cuando se haga click en el botón de envio del formulario 
 		$("#btnformulario").on("click",function(event){
-			event.preventDefault();
+			event.preventDefault(); //esto se usa para que al darle al botón directamente no se borren los datos introducidos en cada input
+			//Se cojen los valores de los inputs
 			var nombreusuario = $("#nombreusuario").val();
 			var nombre = $("#nombre").val();
 			var apellidos = $("#apellidos").val();
 			var clave = $("#clave").val();
 			var email = $("#email").val();
+			var premium=$("input[name='premium']:checked").val();
 			
 			$.ajax({
 				type:"POST",
@@ -105,23 +118,29 @@ $(document).ready(function(){
 					nombre:nombre,
 					apellidos:apellidos,
 					clave:clave,
-					email:email
+					email:email,
+					premium:premium
 					
 				}),
 				success: function(result){
-					alert(result);				
+					//en caso de que la modificacion haya sido correcta se mostrará un mensaje y se limpiará el formulario
+					muestrainfo("correcto",result);	
+						
 					$("#nombre").val("");
 					$("#apellidos").val("");
 					$("#clave").val("");
 					$("#email").val("");
 				},
 				error: function(){
-					alert("Error durante la acción")
+					muestrainfo("error","Error durante la operación");
 				}
 			})
 		})
+		//Cundo se haga click en el botón para eliminar la cuenta
 		$("#btneliminarcuenta").click(function(){
-			var confirmacion=window.confirm("Está a punto de eliminar su cuenta. ¿Está seguro/a de ello?"); 
+			var confirmacion=window.confirm("Está a punto de eliminar su cuenta. ¿Está seguro/a de ello?"); //confirmación para eliminar la cuenta
+			
+			//Si se ha pulsado aceptar en la ventana emergente
 			if(confirmacion==true){
 				$.ajax({
 					type:"POST",
@@ -131,12 +150,11 @@ $(document).ready(function(){
 						usuario:usuariologueado
 					}),
 					success: function(result){
-						alert(result);
-						document.location.href="index.html";
-
+						alert(result); //se muestra como una alerta que el usuario ha sido eliminado
+						document.location.href="index.html"; //se vuelve a la página principal
 					},
 					error: function(){
-						alert("Error durante la acción")
+						muestrainfo("error","Error durante la operación");	
 					}
 				});
 			}
@@ -147,6 +165,8 @@ $(document).ready(function(){
 		})
 })
 
+//Esta función se hace aparte ya que se incrusta en la creación del botón en la tabla de las reservas.
+//Recibe el id de una película, que se corresponde con el id del botón que se pulsa y hace una petición.
 function devolver(idpelicula){
 	$.ajax({
 	    type:"POST",
@@ -157,11 +177,25 @@ function devolver(idpelicula){
 			usuario:usuariologueado,
 		}),
 		success: function(result){
-			alert(result);
+			setTimeout("document.location.href=\"panelusuario.html?username=\"+usuariologueado;", 2000); //esto lo que hace es recargar la pagina a los dos segundos
+			muestrainfo("correcto",result); //se muestra el mensaje de que se ha realizado la devolucion correctamente
+			
+		  
 		},
 		error: function(){
-		 	alert("Error durante la acción")
+		 	muestrainfo("error","Error durante la operación");	
 		}
 	});
 	
+}
+
+//Esta función lo que hace es que dependiendo del tipo de mensaje que tiene que mostrar (correcto o error), coge el div correspondiente a ese tipo de mensaje 
+//del html y muestra el mensaje que se debe mostrar en el mismo, tras 5 segundos este mensaje se esconde.
+function muestrainfo(tipoinfo,textoinfo){
+	$("#"+tipoinfo).show(); //concateno el tipo de la información ya que los espacios reservados en el html tienen como id correcto o error
+	$("#"+tipoinfo).text(textoinfo);
+				
+	setTimeout(() => {
+      $("#"+tipoinfo).hide();
+    }, 5000);
 }

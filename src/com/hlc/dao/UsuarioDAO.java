@@ -142,7 +142,7 @@ public class UsuarioDAO implements IUsuario {
 
 	@Override
 	/*Método que se utilizará en el momento de modificar los datos de un usuario desde su panel de usuario*/
-	public String modificarUsuario(String nombreusuario, String nombre,String apellidos,String clave,String email) {
+	public String modificarUsuario(String nombreusuario, String nombre,String apellidos,String clave,String email,String premium) {
 		// TODO Auto-generated method stub
 		DBConnection con = new DBConnection();
 		String sqldatos="select * from usuarios where nombreusuario LIKE '"+nombreusuario+"'"; //selecciono los datos actuales del usuario
@@ -155,11 +155,13 @@ public class UsuarioDAO implements IUsuario {
 			String apellidosbd=""; 
 			String clavebd= ""; 
 			String emailbd= "";
+			String premiumbd="";
 			while(rs.next()) {
 				nombrebd=rs.getString("nombre");
 				apellidosbd= rs.getString("apellidos"); 
 				clavebd= rs.getString("clave"); 
 				emailbd=rs.getString("email");
+				premiumbd=rs.getString("premium");
 			}
 			
 			//en caso de que algunos de los campos de ese formulario NO estén completos, se pondrán los datos que ya se tenían en la BD relacionados con el mismo
@@ -176,9 +178,12 @@ public class UsuarioDAO implements IUsuario {
 			if(email.equals("")) {
 				email=emailbd;
 			}
+			if(premium.equals("")) {
+				premium=premiumbd;
+			}
 			
 			st.close();
-			String sqlmodificacion="Update usuarios SET nombre='"+nombre+"', apellidos='"+apellidos+"',clave='"+clave+"', email='"+email+"' where nombreusuario LIKE '"+nombreusuario+"'";
+			String sqlmodificacion="Update usuarios SET nombre='"+nombre+"', apellidos='"+apellidos+"',clave='"+clave+"', email='"+email+"', premium='"+premium+"' where nombreusuario LIKE '"+nombreusuario+"'";
 			Statement stmodificacion = con.getConnection().createStatement();
 			stmodificacion.executeQuery(sqlmodificacion); //se modifica el usuario 
 			stmodificacion.close();

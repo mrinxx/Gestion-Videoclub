@@ -32,10 +32,11 @@ public class ServletConsultaSaldo extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		UsuarioDAO usuario = new UsuarioDAO();
-		String nombreusuario=request.getParameter("usuario");
+		String nombreusuario=request.getParameter("usuario"); //coge el nombre del usuario de la request
 		
-		String ret = usuario.comprobarSaldo(nombreusuario);
+		String ret = usuario.comprobarSaldo(nombreusuario); //se llama al método para comprobar el saldo pasándole el usuario
 		response.setContentType("text/html;charset=UTF-8");
+		
 		PrintWriter out = response.getWriter();
 		out.print(ret);
 		out.flush();

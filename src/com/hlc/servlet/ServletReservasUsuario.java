@@ -33,9 +33,9 @@ public class ServletReservasUsuario extends HttpServlet {
 		// TODO Auto-generated method stub
 		UsuarioDAO usuario = new UsuarioDAO();
 		
-		String nombreusuario=request.getParameter("usuario");
+		String nombreusuario=request.getParameter("usuario"); //se coge el usuario del que hay que mostrar las reservas de la petición
 
-		String ret = usuario.verReservas(nombreusuario);
+		String ret = usuario.verReservas(nombreusuario); //se llama al método para ver estas reservas de dicho usuario
 		response.setContentType("text/html;charset=UTF-8");
 		PrintWriter out = response.getWriter();
 		System.out.println(ret);

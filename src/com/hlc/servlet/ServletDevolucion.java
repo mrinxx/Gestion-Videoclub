@@ -32,12 +32,12 @@ public class ServletDevolucion extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		PeliculaDAO pelicula=new PeliculaDAO();
-		String id=request.getParameter("id");
-		String usuario=request.getParameter("usuario");
+		String id=request.getParameter("id"); //se coge de la request el id de la pelicula
+		String usuario=request.getParameter("usuario");//se coge de la request el nombre del usuario
 		
-		String ret=pelicula.devolver(id, usuario);
+		String ret=pelicula.devolver(id, usuario); //se llama al método para realizar la devolucion
 		PrintWriter out = response.getWriter();
-		out.print(ret); //quito ln para quitar el salto de linea y poder comparar cadenas
+		out.print(ret);
 		
 		out.flush();
 		out.close();

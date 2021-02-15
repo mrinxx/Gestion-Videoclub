@@ -37,7 +37,7 @@ public class ServletCreacionWeb extends HttpServlet {
 		
 		PeliculaDAO pelicula = new PeliculaDAO();
 		
-		String ret = pelicula.listarPeliculas();
+		String ret = pelicula.listarPeliculas(); //se llama al método que obtiene todas las películas
 		response.setContentType("text/html;charset=UTF-8");
 		PrintWriter out = response.getWriter();
 		out.print(ret); //quito ln para quitar el salto de linea y poder comparar cadenas

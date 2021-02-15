@@ -32,11 +32,12 @@ public class ServletModificarSaldo extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		UsuarioDAO usuario = new UsuarioDAO();
+		//Se coge de la petición el nombre de usuario que tiene que cambiar el saldo, su saldo actual y lo que se le añade a tal cantidad
 		String nombreusuario=request.getParameter("usuario");
 		float saldo=Float.parseFloat(request.getParameter("saldoactual"));
 		float asumar=Float.parseFloat(request.getParameter("cantidadasumar"));
 		
-		String ret = usuario.modificarSaldo(nombreusuario,saldo,asumar);
+		String ret = usuario.modificarSaldo(nombreusuario,saldo,asumar); //se llama al método que modifica el saldo
 		response.setContentType("text/html;charset=UTF-8");
 		PrintWriter out = response.getWriter();
 		out.print(ret);

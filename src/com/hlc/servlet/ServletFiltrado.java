@@ -33,8 +33,8 @@ public class ServletFiltrado extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		PeliculaDAO pelicula = new PeliculaDAO();
-		String genero=request.getParameter("genero");
-		String ret = pelicula.filtrar(genero);
+		String genero=request.getParameter("genero"); //se coge el genero de la request
+		String ret = pelicula.filtrar(genero); //se llama al método para buscar por ese genero
 		response.setContentType("text/html;charset=UTF-8");
 		System.out.println(ret);
 		PrintWriter out = response.getWriter();

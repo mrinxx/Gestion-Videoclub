@@ -3,18 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link rel="stylesheet" href="./index.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="./index.js"></script>
 <title>Bienvenido</title>
 </head>
 <body>
-	<h1>Inicio de Sesión</h1>
-	<div id="respuesta" class="alert alert-danger" role="alert"></div>
-	<form class="form-group">
+	<header>
+		<h1>Mi videoclub</h1>	
+		<a href="./registro.html" id="btnregistro" class="btn btn-warning">¿Aún no eres socio? Registrate</a>
+	</header>
+	<h2>Inicio de Sesión</h2>
+	
+	<div id="respuesta" class="alert alert-danger w-75 p-3 " role="alert" style="display:none"></div>
+	
+	<div class="text-center">
+		<form class="form-group w-50">
 		Nombre de usuario:<input type="text" id="nombreusuario" class="form-control"/><br>
 		Contraseña:<input type="password" id="pass" class="form-control"><br>
 		<input type="button" value="Enviar" id="btnenvio" class="btn btn-primary"/>
 	</form>
-	<a href="./registro.html" id="btnregistro" class="btn btn-warning">¿Aún no eres socio?.Registrate</a>
+	</div>
+
+	
 </body>
 </html>

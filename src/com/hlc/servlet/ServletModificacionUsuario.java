@@ -33,13 +33,17 @@ public class ServletModificacionUsuario extends HttpServlet {
 		// TODO Auto-generated method stub
 		UsuarioDAO usuario=new UsuarioDAO();
 
+		//Se toman todos los valores correspondientes al formulario de cambio de datos y que han sido pasados por la request
 		String nombreusuario = request.getParameter("nombreusuario");
 		String nombre = request.getParameter("nombre");
 		String apellidos = request.getParameter("apellidos");
 		String clave = request.getParameter("clave");
 		String email= request.getParameter("email");
+		String premium= request.getParameter("premium");
+
+
 		
-		String ret = usuario.modificarUsuario(nombreusuario,nombre,apellidos,clave,email);
+		String ret = usuario.modificarUsuario(nombreusuario,nombre,apellidos,clave,email,premium); //se llama al método que realiza este cambio
 		
 		response.setContentType("text/html;charset=UTF-8");
 		PrintWriter out = response.getWriter();

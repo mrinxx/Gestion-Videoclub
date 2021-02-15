@@ -33,9 +33,9 @@ public class ServletEliminarUsuario extends HttpServlet {
 		// TODO Auto-generated method stub
 				
 				UsuarioDAO usuario = new UsuarioDAO();
-				String nombreusuario=request.getParameter("usuario");
+				String nombreusuario=request.getParameter("usuario"); //se coge de la request el nombre del usuario
 				
-				String ret = usuario.eliminarUsuario(nombreusuario);
+				String ret = usuario.eliminarUsuario(nombreusuario); //se llama al método para eliminar dicho usuario
 				response.setContentType("text/html;charset=UTF-8");
 				PrintWriter out = response.getWriter();
 				out.println(ret);

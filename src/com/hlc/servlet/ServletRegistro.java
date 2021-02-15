@@ -33,6 +33,7 @@ public class ServletRegistro extends HttpServlet {
 		// TODO Auto-generated method stub
 		UsuarioDAO usuario = new UsuarioDAO();
 		
+		//Se cogen los datos correspondientes al formulario de registro que se han pasado por la petición
 		String nombreusuario=request.getParameter("nombreusuario");
 		String clave=request.getParameter("clave");
 		String nombre= request.getParameter("nombre");
@@ -41,12 +42,13 @@ public class ServletRegistro extends HttpServlet {
 		float saldo=Float.parseFloat(request.getParameter("saldo"));
 		String cadenapremium=request.getParameter("premium");
 		
+		//Aquí se transforma el valor de lo que se recibe como premium desde la petición, lo cual es una cadena, al tipo correcto, booleano
 		Boolean premium=false;
 		if (cadenapremium.equalsIgnoreCase("true")) {
 			premium=true;
 		}
 		
-		String respuesta = usuario.registrarusuario(nombreusuario,clave,nombre,apellidos,email,saldo,premium);
+		String respuesta = usuario.registrarusuario(nombreusuario,clave,nombre,apellidos,email,saldo,premium); 
 		response.setContentType("text/html;charset=UTF-8");
 		System.out.println(respuesta);
 		PrintWriter out = response.getWriter();

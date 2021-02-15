@@ -1,0 +1,19 @@
+*{
+	box-sizing:border-box;
+}
+
+
+h1{
+	display:inline;
+	margin-right:60%
+}
+h2{margin-left:37%}
+#respuesta{
+	margin-left:10%;
+}
+form{
+	margin-left:20%;
+	display:flex;
+	flex-direction:column;
+	justify-content:center;
+}

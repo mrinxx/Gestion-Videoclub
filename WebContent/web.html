@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<link rel="stylesheet" href="webStyle.css">
+<link rel="stylesheet" href="./webStyle.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="./web.js"></script>
 <title>Videoclub</title>
@@ -17,16 +17,23 @@
 			<a href="./index.html" class="btn btn-danger">Cerrar sesión</a>
 		</nav>
 	</header>
-	<label for="generos">Filtrar:</label>
-	<select name="generos" id="generos">
-		  <option value="ciencia ficción">Ciencia Ficción</option>
-		  <option value="drama">Drama</option>
-		  <option value="comedia">Comedia</option>
-		  <option value="romance">Romance</option>
-		  <option value="terror">Terror</option>
-		  <option value="animacion">Animación</option>
-	</select>
+	
+	<div id="error" class="alert alert-danger" role="alert" style="display:none"></div>
+	<div id="correcto" class="alert alert-success" role="alert" style="display:none"></div>
+	
+	<div id="filtrado">
+		<label for="generos">Filtrar:</label>
+		<select name="generos" id="generos">
+			  <option value="ciencia ficción">Ciencia Ficción</option>
+			  <option value="drama">Drama</option>
+			  <option value="comedia">Comedia</option>
+			  <option value="romance">Romance</option>
+			  <option value="terror">Terror</option>
+			  <option value="animacion">Animación</option>
+		</select>
 	<button id="btnfiltrar" class="btn btn-primary" onclick=filtrar(generos.value)>Enviar</button>
+	</div>
+	
 	
 	<div id="mensajes"></div>
 	<div id="espaciopeliculas"></div>

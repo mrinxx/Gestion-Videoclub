@@ -2,6 +2,8 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link rel="stylesheet" href="./panelusuario.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="./panelusuario.js"></script>
 <title>Panel de usuario</title>
@@ -10,9 +12,13 @@
 	<header>
 		<h1>Panel de Usuario</h1>
 		<nav>
-			<button id="btnvolver">Atrás</button>
+			<button id="btnvolver" class="btn btn-warning">Atrás</button>
+			<button id="btneliminarcuenta" class="btn btn-danger">Eliminar cuenta</button>
 		</nav>
 	</header>
+	<div id="error" class="alert alert-danger" role="alert" style="display:none"></div>
+	<div id="correcto" class="alert alert-success" role="alert" style="display:none"></div>
+		
 	
 	<section id="sctreservas">
 		<h2>Reservas Realizadas</h2>
@@ -21,20 +27,24 @@
 	<section is="sctsaldo">
 		<h2 id="saldodisponible"></h2><br>
 		<label for="addsaldo">Inserte la cantidad a añadir a su saldo:</label><input id="addsaldo" type="number" step="0.01" />
-		<button id="btnmodificarsaldo">Añadir Saldo</button>
+		<button id="btnmodificarsaldo" class="btn btn-info">Añadir Saldo</button>
 	</section>
 	<section id="sctformulario">
-	<form id="formulario">
+	<form id="formulario" >
 		<h2>Formulario de cambio de datos</h2>
-		<label for="nombreusuario">Nombre de Usuario:</label><input type="text" id="nombreusuario" disabled /><br>
-		<label for="nombre">Nombre:</label><input type="text" id="nombre" type="text" /><br>
-		<label for="apellidos">Apellidos:</label><input type="text" id="apellidos" type="text"/><br>
-		<label for="clave">Contraseña:</label><input type="text" id="clave" type="text"/><br>
-		<label for="email">Correo electrónico:</label><input type="text" id="email" type="text"/><br>
-		<input type="submit" id="btnformulario" value="Enviar"></input>
+		<label for="nombreusuario">Nombre de Usuario:</label><input type="text" id="nombreusuario" class="form-control" disabled /><br>
+		<label for="nombre">Nombre:</label><input type="text" id="nombre" type="text" class="form-control"/><br>
+		<label for="apellidos">Apellidos:</label><input type="text" id="apellidos" type="text" class="form-control"/><br>
+		<label for="clave">Contraseña:</label><input type="text" id="clave" type="text" class="form-control"/><br>
+		<label for="email">Correo electrónico:</label><input type="text" id="email" type="text" class="form-control"/><br>
+		<label for="premium">Usuario premium:</label>
+		<input type="radio"  name="premium" value="true"> Si
+    	<input type="radio"  name="premium" value="false"> No<br>
+
+		<input type="submit" id="btnformulario" value="Enviar" class="btn btn-success"></input>
 	</form>	
-	</section>
-	<button id="btneliminarcuenta">Eliminar cuenta</button>
+	</section><br>
+	
 	
 </body>
 </html>

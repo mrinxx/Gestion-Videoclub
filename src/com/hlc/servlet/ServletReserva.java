@@ -33,11 +33,11 @@ public class ServletReserva extends HttpServlet {
 		// TODO Auto-generated method stub
 		PeliculaDAO pelicula= new PeliculaDAO();
 		
-		String nombreusuario=request.getParameter("nombreusuario");
-		String idpelicula=request.getParameter("idpelicula");
+		String nombreusuario=request.getParameter("nombreusuario"); //nombre de usuario vinculado a la reserva que se pasa desde la request
+		String idpelicula=request.getParameter("idpelicula"); //pelicula que se quiere reservar pasada desde la request
 		
 		
-		String ret=pelicula.reservar(idpelicula, nombreusuario);
+		String ret=pelicula.reservar(idpelicula, nombreusuario); //se intenta realizar la reserva con el método indicado para ello
 		response.setContentType("text/html;charset=UTF-8");
 		PrintWriter out = response.getWriter();
 		out.print(ret); 
