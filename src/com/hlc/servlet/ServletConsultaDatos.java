@@ -14,14 +14,14 @@ import com.hlc.dao.UsuarioDAO;
 /**
  * Servlet implementation class ServletConsultaSaldo
  */
-@WebServlet("/ServletConsultaSaldo")
-public class ServletConsultaSaldo extends HttpServlet {
+@WebServlet("/ServletConsultaDatos")
+public class ServletConsultaDatos extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ServletConsultaSaldo() {
+    public ServletConsultaDatos() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -34,7 +34,7 @@ public class ServletConsultaSaldo extends HttpServlet {
 		UsuarioDAO usuario = new UsuarioDAO();
 		String nombreusuario=request.getParameter("usuario"); //coge el nombre del usuario de la request
 		
-		String ret = usuario.comprobarSaldo(nombreusuario); //se llama al método para comprobar el saldo pasándole el usuario
+		String ret = usuario.comprobarDatos(nombreusuario); //se llama al método para comprobar el saldo pasándole el usuario
 		response.setContentType("text/html;charset=UTF-8");
 		
 		PrintWriter out = response.getWriter();

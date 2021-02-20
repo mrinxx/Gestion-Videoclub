@@ -38,7 +38,6 @@ public class ServletReservasUsuario extends HttpServlet {
 		String ret = usuario.verReservas(nombreusuario); //se llama al método para ver estas reservas de dicho usuario
 		response.setContentType("text/html;charset=UTF-8");
 		PrintWriter out = response.getWriter();
-		System.out.println(ret);
 		out.print(ret); 
 		
 		out.flush();

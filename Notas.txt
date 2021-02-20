@@ -1,0 +1,5 @@
+Version Java: 14
+Version Tomcat: 8.5
+
+Aclaración: Aunque en clase especifiqué que un usuario solo puede alquilar una copia de cada
+película, finalmente decidí cambiarlo.

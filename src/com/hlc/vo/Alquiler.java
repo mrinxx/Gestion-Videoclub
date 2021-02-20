@@ -5,6 +5,7 @@ package com.hlc.vo;
 public class Alquiler {
 	/*Los campos que tiene esta clase son los que se necesitan en el momento de visualizar las reservas excepto el id de la película, el cual 
 	 * usaré para realizar acciones*/
+	private int numero_alquiler;
 	private String id; //id de la película
 	private String fecha; //fecha del alquiler
 	private String titulo; //titulo de la pelicula
@@ -13,7 +14,8 @@ public class Alquiler {
 	
 	public Alquiler() {};
 	
-	public Alquiler(String id,String fecha, String titulo, String genero, String estreno) {
+	public Alquiler(int numero_alquiler,String id,String fecha, String titulo, String genero, String estreno) {
+		this.numero_alquiler=numero_alquiler;
 		this.id=id;
 		this.fecha = fecha;
 		this.titulo = titulo;
@@ -22,6 +24,14 @@ public class Alquiler {
 	}
 
 	
+	public int getNumero_alquiler() {
+		return numero_alquiler;
+	}
+
+	public void setNumero_alquiler(int numero_alquiler) {
+		this.numero_alquiler = numero_alquiler;
+	}
+
 	public String getId() {
 		return id;
 	}

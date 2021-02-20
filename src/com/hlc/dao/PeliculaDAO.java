@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
+
 
 import com.google.gson.Gson;
 import com.hlc.connection.DBConnection;
@@ -19,7 +19,7 @@ public class PeliculaDAO implements IPelicula{
 	public String listarPeliculas() {
 		Gson json= new Gson(); //objeto para JSON
 		DBConnection con = new DBConnection();
-		String sql ="Select * from peliculas"; //cojo todas las películas de la BD
+		String sql ="Select * from peliculas order by titulo"; //cojo todas las películas de la BD ordenadas por su titulo
 		try {
 			ArrayList<Pelicula> datos= new ArrayList<Pelicula>(); //ArrayList donde se van a almacenar cada una de las películas que se vayan obteniendo
 			Statement st = con.getConnection().createStatement();
@@ -45,7 +45,7 @@ public class PeliculaDAO implements IPelicula{
 				
 				Pelicula pelicula = new Pelicula(id,titulo,genero,actorppal,copiasdisponibles,estreno);
 			
-			//System.out.println(pelicula.toString());
+	
 			//Se mira si hay copias de la película, en caso de que haya se añade a los datos que se 
 			//van a devolver, si no no
 				if(pelicula.getCopiasdisponibles()>0) {
@@ -74,8 +74,8 @@ public class PeliculaDAO implements IPelicula{
 		String sqlprecio="Select precio,copias_disponibles from peliculas where id LIKE '"+idpelicula+"'"; //Para buscar el precio de la pelicula
 		
 		try {			
-			Statement stsaldo = con.getConnection().createStatement();
-			ResultSet rssaldo=stsaldo.executeQuery(sqlsaldo);
+			Statement st = con.getConnection().createStatement();
+			ResultSet rssaldo=st.executeQuery(sqlsaldo);
 			double saldo = 0; //para almacenar el saldo que tiene el usuario
 			int precio = 0; //para almacenar el precio de la película en cuestión
 			int copias = 0; //para almacenar las copias de la pelicula en cuestion
@@ -88,10 +88,7 @@ public class PeliculaDAO implements IPelicula{
 				premium=rssaldo.getString("premium");
 			}
 			
-			stsaldo.close();
-			
-			Statement stprecio = con.getConnection().createStatement();
-			ResultSet rsprecio=stprecio.executeQuery(sqlprecio);
+			ResultSet rsprecio=st.executeQuery(sqlprecio);
 			
 			//Se va a coger el precio y las copias disponibles de la película que se quiere alquilar
 			while(rsprecio.next()) {
@@ -100,10 +97,6 @@ public class PeliculaDAO implements IPelicula{
 			}
 			
 			double preciopremium=precio-(precio*0.10); //precio por si el usuario es premium
-			
-			Statement st = con.getConnection().createStatement();
-			Statement stmodificacionsaldo = con.getConnection().createStatement();
-			Statement stmodificacionunidades = con.getConnection().createStatement();
 			double nuevosaldo=0; //almacenará el saldo resultante
 			
 			
@@ -116,26 +109,25 @@ public class PeliculaDAO implements IPelicula{
 				nuevosaldo=saldo-preciopremium; //se modifica el saldo del usuario
 				modificacionsaldo="Update usuarios set saldo = "+nuevosaldo+" where nombreusuario LIKE '"+nombreusuario+"'"; //consulta de modificación de saldo 
 				st.executeQuery(sql);
-				stmodificacionsaldo.executeQuery(modificacionsaldo); //se modifica el saldo
-				stmodificacionunidades.executeQuery(modificacionunidades); //se modifican las unidades
+				st.executeQuery(modificacionsaldo); //se modifica el saldo
+				st.executeQuery(modificacionunidades); //se modifican las unidades
 			} 
 			//Por otra parte, en cado de que el usuario no sea premium se va a comprobar si tiene saldo como para pagar el precio de la película
 			else if(premium.equals("false") && saldo>=precio) {
 				nuevosaldo=saldo-precio;
 				modificacionsaldo="Update usuarios set saldo = "+nuevosaldo+" where nombreusuario LIKE '"+nombreusuario+"'"; //consulta de modificación de saldo 
 				st.executeQuery(sql);
-				stmodificacionsaldo.executeQuery(modificacionsaldo);
-				stmodificacionunidades.executeQuery(modificacionunidades);
+				st.executeQuery(modificacionsaldo);
+				st.executeQuery(modificacionunidades);
 			}	
 			//En caso de que los usuarios no tengan saldo suficiente, la operación no se va a realizar
 			else {
 				operacionexitosa="false"; //cambio el estado de esta variable para que quede constancia de que no se puede realizar el alquiler
 			}
 			
-			//cierro todos los statements
+			//cierro el statement
 			st.close();
-			stmodificacionsaldo.close();
-			stmodificacionunidades.close();
+
 			
 			return operacionexitosa; //devuelvo la cadena que especifica si la operación ha salido bien o no
 
@@ -152,7 +144,14 @@ public class PeliculaDAO implements IPelicula{
 	public String filtrar(String genero) {
 		Gson json= new Gson(); //objeto para JSON
 		DBConnection con = new DBConnection();
-		String sql ="Select * from peliculas where genero LIKE'"+genero+"'"; //busco en la BD las películas con el genero que se ha pasado como parametro
+		String sql ="";
+		
+		if(genero.equals("todas")) {
+			 sql ="Select * from peliculas order by titulo"; //en caso de que "no se quiera filtrar"
+		}else {
+			sql ="Select * from peliculas where genero LIKE'"+genero+"' order by titulo"; //busco en la BD las películas con el genero que se ha pasado como parametro
+		}
+		
 		try {
 			ArrayList<Pelicula> datos= new ArrayList<Pelicula>(); //Donde se van a almacenar las películas obtenidas
 			Statement st = con.getConnection().createStatement();
@@ -203,26 +202,33 @@ public class PeliculaDAO implements IPelicula{
 
 	@Override
 	/*+ -> Método que va a devolver una película*/
-	public String devolver(String idpelicula, String usuario) {
+	public String devolver(String usuario,int numero_alquiler) {
 		// TODO Auto-generated method stub
 		DBConnection con = new DBConnection();
-		String sql ="DELETE from alquileres where usuario LIKE '"+usuario+"' and pelicula LIKE '"+idpelicula+"'"; //elimino de la tabla alquileres el alquiler correspondiente
-		String sqlunidades="Select copias_disponibles from peliculas where id LIKE '"+idpelicula+"'"; //busco las copias de la pelicula que se va a devolver
+		
+		String sql ="DELETE from alquileres where usuario LIKE '"+usuario+"' and numero_alquiler="+numero_alquiler; //elimino de la tabla alquileres el alquiler correspondiente
+		String cogerpelicula="Select pelicula from alquileres where numero_alquiler="+numero_alquiler;
 		try {
 			Statement st = con.getConnection().createStatement();
-			st.executeQuery(sql); 
-			st.close();
+
+			//Esto lo hago ya para coger la película que almacena la fila de los alquileres y cuyo numero de alquiler es el que se le 
+			//ha pasado como parámetro
+			String idpelicula=""; //variable que va a almacenar la película que se va a devolver
+			ResultSet rspelicula=st.executeQuery(cogerpelicula);
+			while(rspelicula.next()) {
+				idpelicula=rspelicula.getString("pelicula");
+			}
+			
+			String sqlunidades="Select copias_disponibles from peliculas where id LIKE '"+idpelicula+"'"; //busco las copias de la pelicula que se va a devolver
+			st.executeQuery(sql);
 			int cantidad=0; //variable que va a almacenar la cantidad de películas que hay (sin contar la que se devuelve)
-			Statement stcogercantidad = con.getConnection().createStatement();
-			ResultSet rs = stcogercantidad.executeQuery(sqlunidades);
+			ResultSet rs = st.executeQuery(sqlunidades);
 			while(rs.next()) {
 				cantidad=rs.getInt("copias_disponibles"); //se almacena la cantidad
 			}
-			stcogercantidad.close();
-			Statement stmodificarcantidad = con.getConnection().createStatement();
 			String sqlmodificacion="UPDATE peliculas set copias_disponibles ="+(cantidad+1)+" where id LIKE '"+idpelicula+"'"; //modifico la fila de la película que se ha devuelto para sumarle a la cantidad la que se ha devuelto
-			stmodificarcantidad.executeQuery(sqlmodificacion);
-			stmodificarcantidad.close();
+			st.executeQuery(sqlmodificacion);
+			st.close();
 			
 			return "Pelicula devuelta"; //mensaje que se devuelve para mostrar en la página
 		}catch(Exception e) {

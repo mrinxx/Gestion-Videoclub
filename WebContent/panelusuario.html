@@ -26,22 +26,48 @@
 	</section>
 	<section is="sctsaldo">
 		<h2 id="saldodisponible"></h2><br>
-		<label for="addsaldo">Inserte la cantidad a añadir a su saldo:</label><input id="addsaldo" type="number" step="0.01" />
+		<label for="addsaldo">Inserte la cantidad a añadir a su saldo:</label> <input id="addsaldo" type="number" step="0.01" class="form-control"/>
 		<button id="btnmodificarsaldo" class="btn btn-info">Añadir Saldo</button>
 	</section>
 	<section id="sctformulario">
 	<form id="formulario" >
 		<h2>Formulario de cambio de datos</h2>
-		<label for="nombreusuario">Nombre de Usuario:</label><input type="text" id="nombreusuario" class="form-control" disabled /><br>
-		<label for="nombre">Nombre:</label><input type="text" id="nombre" type="text" class="form-control"/><br>
-		<label for="apellidos">Apellidos:</label><input type="text" id="apellidos" type="text" class="form-control"/><br>
-		<label for="clave">Contraseña:</label><input type="text" id="clave" type="text" class="form-control"/><br>
-		<label for="email">Correo electrónico:</label><input type="text" id="email" type="text" class="form-control"/><br>
-		<label for="premium">Usuario premium:</label>
-		<input type="radio"  name="premium" value="true"> Si
-    	<input type="radio"  name="premium" value="false"> No<br>
+		<div id="cuerpo">
+			<label for="nombreusuario">Nombre de Usuario: </label><input type="text" id="nombreusuario" class="form-control" disabled /><br>
+			<div class="row">
+		    <div class="col">
+		      <label for="nombre">Nombre: </label><input type="text" id="nombre" type="text" class="form-control" pattern=\D/><br>
+		    </div>
+		    <div class="col">
+		      <label for="apellidos">Apellidos: </label><input type="text" id="apellidos" type="text" class="form-control" pattern=\D/><br>
+		    </div>
+		  </div>
+		  <label for="email">Correo electrónico: </label><input type="email" id="email" type="text" class="form-control"/><br>
+		
+		<div class="row">
+		    <div class="col">
+		    	<label for="clave">Contraseña: </label><input type="password" id="clave" type="text" class="form-control"/>
+		   </div>
+		   <div class="col">
+		   	<label for="claverep">Repita la contraseña: </label><input type="password" id="claverep" type="text" class="form-control"/>
+		   </div>
+		</div>
+			
+			
+			
+			
+			
+		</div>
 
-		<input type="submit" id="btnformulario" value="Enviar" class="btn btn-success"></input>
+		
+		<div id="botonerapremium" class="form-check form-check-inline">
+			<label for="premium">Usuario premium:</label>
+			<input type="radio"  id="radio1" name="premium" value="true" class="form-check-input"><label for="radio1">Si</label>
+    		<input type="radio"  id="radio2" name="premium" value="false"class="form-check-input"><label for="radio2">No</label>
+		</div><br>
+
+
+		<input type="submit" id="btnformulario" value="Enviar" class="btn btn-success btn-lg btn-block"></input>
 	</form>	
 	</section><br>
 	

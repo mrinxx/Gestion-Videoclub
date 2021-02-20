@@ -1,10 +1,9 @@
-
-
 $(document).ready(function(){
 	//Cuando se pulse el botón para registrar al usuario, se van a coger todos los valores que están en los inputs
 	$("#btnregistro").click(function(){	
 		var nombreusuario=$("#nombreusuario").val();
 		var clave=$("#pass").val();
+		var claverep=$("#passrep").val();
 		var nombre=$("#nombre").val();
 		var apellidos=$("#apellidos").val();
 		var email=$("#correo").val();
@@ -18,6 +17,14 @@ $(document).ready(function(){
 			var premium="false";
 		}
 		
+		//En caso de que las contraseñas no coincidan, se va a mostrar un error y por el contrario se realizará la peticion
+		if(clave!=claverep){
+			$("#respuesta").show(); 
+					$("#respuesta").text("Las contraseñas no coinciden. Intentelo de nuevo");
+					setTimeout(() => {
+      					$("#respuesta").hide();
+    				}, 5000);
+		}else{
 		$.ajax({
 			type:"POST",
 			dataType:"html",
@@ -56,5 +63,6 @@ $(document).ready(function(){
     				}, 5000);
 		}
 	})
+	}
 })
 })

@@ -22,7 +22,7 @@ $(document).ready(function(){
 		})
 		
 		//Cuando se pulse el boltrón del apartado de filtrado, se cogerá el género que está en ese momento seleccionado
-		$("#btnfiltrar").click(function(){	
+		$("#generos").on("change",function(){	
 			var genero = $("#generos").val();
 		
 		$.ajax({
@@ -63,9 +63,11 @@ function reservar(id){
 				//ha sido fallida
 				if(result=="true"){
 					muestrainfo("correcto","Pelicula alquilada con éxito");
+					setTimeout("document.location.href=\"web.html?username=\"+usuariologueado;", 2000); //esto lo que hace es recargar la pagina a los dos segundos
+
 				}
 				else{
-					muestrainfo("error","Error en el alquiler de la película.");
+					muestrainfo("error","Error en el alquiler de la película. Revise su crédito");
 				}
 				
 			},
@@ -78,7 +80,7 @@ function reservar(id){
 //Función que monta la tabla que se visualiza en la web, ya sea filtrada o no. La pongo aquí ya que este trozo de código lo 
 //repetía dos veces, por lo que no era óptimo
 function montarTabla(peliculas){
-	let html="<table class=\"table table-hover\"><thead class=\"thead-dark\"><tr><th scope=\"col\">Titulo</th><th scope=\"col\">Genero</th><th scope=\"col\">Actor Principal</th><th scope=\"col\">Precio Alquiler</th><th scope=\"col\"></th></tr><thead><tbody>";
+	let html="<table class=\"table table-hover\"><thead class=\"thead-dark\"><tr><th scope=\"col\">#</th><th>Titulo</th><th scope=\"col\">Genero</th><th scope=\"col\">Actor Principal</th><th scope=\"col\">Unidades disponibles</th><th scope=\"col\">Precio Alquiler</th><th scope=\"col\"></th></tr><thead><tbody>";
 				 
 	for (let i=0; i<peliculas.length; i++){
 		let id=peliculas[i]["id"];
@@ -86,10 +88,11 @@ function montarTabla(peliculas){
 		let genero = peliculas[i]["genero"];
 		let actor = peliculas[i]["actorppal"];
 		let precio = peliculas[i]["precio"];
+		let unidades = peliculas[i]["copiasdisponibles"]
 			
 		//el id del botón que se va a pulsar es el mismo que el id del elemento en la base de datos
 		//con ello lo que hago es que al pulsar este botón ya tendré ubicada la película que se quiere alquilar
-	html+="<tr><th scope=\"row\" >"+titulo+"</th><td>"+genero.toUpperCase()+"</td><td >"+actor+"</td><td>"+precio+" euros</td><td><button id="+id+" onclick=reservar(this.id) class=\"btn btn-warning\">Reservar</button></td></tr>";
+	html+="<tr><th scope=\"row\">"+id+"</th><td>"+titulo+"</td><td>"+genero.toUpperCase()+"</td><td>"+actor+"</td><td>"+unidades+"</td><td>"+precio+" euros</td><td><button id="+id+" onclick=reservar(this.id) class=\"btn btn-warning\">Reservar</button></td></tr>";
 	}
 	return html;
 }

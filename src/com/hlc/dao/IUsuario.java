@@ -7,6 +7,6 @@ public interface IUsuario {
 	public String modificarUsuario(String nombreusuario, String nombre,String apellidos,String clave,String email,String premium);
 	public String verReservas(String nombreusuario);
 	public String eliminarUsuario(String nombreusuario);
-	public String comprobarSaldo(String nombreusuario); 
+	public String comprobarDatos(String nombreusuario); 
 	public String modificarSaldo(String nombreusuario,float saldo,float asumar); 
 }

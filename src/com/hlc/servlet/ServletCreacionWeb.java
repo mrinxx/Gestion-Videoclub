@@ -2,7 +2,7 @@ package com.hlc.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.hlc.dao.PeliculaDAO;
-import com.hlc.vo.Pelicula;
+
 
 
 /**

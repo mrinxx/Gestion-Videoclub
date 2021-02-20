@@ -1,0 +1,26 @@
+header{
+	background-color:#CECECE;
+	display:flex; 
+	justify-content:space-evenly;
+	align-items:center;
+}
+
+#btnatras{
+	margin-top:10%;
+	margin-right:20%;
+}
+#formulario{
+	width:25%;
+	margin:auto auto;
+	margin-bottom:2%;
+}
+fieldset{
+
+	width:50%;
+	margin:auto auto;
+	margin-top:2%;
+
+}
+
+
+

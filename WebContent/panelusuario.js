@@ -16,13 +16,30 @@ $(document).ready(function(){
 	$.ajax({
 			type:"GET",
 			dataType:"html",
-			url: "./ServletConsultaSaldo",
+			url: "./ServletConsultaDatos",
 			data:$.param({
 				usuario:usuariologueado //mando el usuario al que pertenece el panel y del cual busco el saldo
 			}),
 			success: function(result){
-				auxsaldo=parseFloat(result); //modifico auxsaldo para guardar lo que tiene en un principio
-				$("#saldodisponible").html("Saldo Disponible:"+parseFloat(result)+" euros"); //si la operación es exitosa se muestra donde corresponde
+				datos=result.split(",");
+
+				$("#nombre").val(datos[0]);
+				$("#apellidos").val(datos[1]);
+				$("#clave").val(datos[2]);
+				$("#email").val(datos[3]);
+				auxsaldo=parseFloat(datos[5]);
+				$("#saldodisponible").html("Saldo Disponible:"+auxsaldo+" euros");
+				
+				var cadenapremium=datos[4];
+				if (cadenapremium=="true"){
+					$("input[value='true']").prop("checked","true");
+				}
+				else{
+					$("input[value='false']").prop("checked","true");
+				}
+				
+				//a //modifico auxsaldo para guardar lo que tiene en un principio
+				// //si la operación es exitosa se muestra donde corresponde
 			},
 			error: function(){
 				muestrainfo("error","Error durante la carga de la página");
@@ -46,19 +63,20 @@ $(document).ready(function(){
 				}else{
 					//En caso de que si se hayan realizado reservas:
 					//html = variable que almacena una cadena correspondiente a la construccion de la tabla que se va a mostrar en el panel
-					let html="<table class=\"table table-hover\"><thead class=\"thead-dark\"><tr><th scope=\"col\">Titulo</th><th scope=\"col\">Genero</th><th scope=\"col\">Estreno</th><th scope=\"col\">Fecha del alquiler</th><th></th></tr><thead><tbody>";
+					let html="<table class=\"table table-hover\"><thead class=\"thead-dark\"><th scope=\"col\">#</th><th>Titulo</th><th scope=\"col\">Genero</th><th scope=\"col\">Estreno</th><th scope=\"col\">Fecha del alquiler</th><th></th></tr><thead><tbody>";
 					
 					//Añado una fila a la cadena correspondiente con la película
 					for (let i=0; i<reservas.length; i++){
 						let id = reservas[i]["id"];
+						let numero_reserva=reservas[i]["numero_alquiler"];
 						let titulo = reservas[i]["titulo"];
 						let genero = reservas[i]["genero"];
 						let estreno = reservas[i]["estreno"];
 						let fecha = reservas[i]["fecha"];
 						
-						html+="<tr><th scope=\"row\">"+titulo+"</th><td>"+genero.toUpperCase()+"</td><td >"+estreno+"</td><td>"+fecha+"</td><td><button id="+id+" onclick=devolver(this.id) class=\"btn btn-success\">Devolver Película</button></td></tr>";
-						//NOTA: El id del botón es el id de la película que se va a devolver y el cual se coge desde los datos devueltos por el servlet. Esto es así ya que 
-						//directamente puedo saber la película a la que se esta refiriendo esa fila de la tabla
+						html+="<tr><th scope=\"row\">"+id+"</th><td>"+titulo+"</td><td>"+genero.toUpperCase()+"</td><td >"+estreno+"</td><td>"+fecha+"</td><td><button id="+numero_reserva+" onclick=devolver(this.id) class=\"btn btn-success\">Devolver Película</button></td></tr>";
+						//NOTA: El id del botón es el id de la reserva que se va a devolver y el cual se coge desde los datos devueltos por el servlet. Esto es así ya que 
+						//directamente puedo saber el alquiler alque se refiere justamente esa fila de la tabla y no borrar otro que tenga el mismo usuario y pelicula
 					}
 					$("#reservas").html(html); //muestro la tabla en el espacio reservado para ello
 				}
@@ -88,7 +106,7 @@ $(document).ready(function(){
 						auxsaldo=saldo; //se actualiza el valor de auxsaldo
 						//se recarga la página tras 2 segundos
 						setTimeout("document.location.href=\"panelusuario.html?username=\"+usuariologueado;", 2000); //esto lo que hace es recargar la pagina a los dos segundos
-						muestrainfo("correcto",result); //se mostrará el mensaje de que la acción ha sido correcta
+						muestrainfo("correcto","Saldo modificado exitosamente"); //se mostrará el mensaje de que la acción ha sido correcta
 						$("#saldodisponible").val(saldo); //se cambia el valor del saldo disponible que aparece en la pantalla
 					
 					},
@@ -98,6 +116,7 @@ $(document).ready(function(){
 				});
 			}
 		})
+
 		//Cuando se haga click en el botón de envio del formulario 
 		$("#btnformulario").on("click",function(event){
 			event.preventDefault(); //esto se usa para que al darle al botón directamente no se borren los datos introducidos en cada input
@@ -107,7 +126,7 @@ $(document).ready(function(){
 			var apellidos = $("#apellidos").val();
 			var clave = $("#clave").val();
 			var email = $("#email").val();
-			var premium=$("input[name='premium']:checked").val();
+			var premium=$("input[name='premium']:checked").val(); //coge el radiobutton que esté marcado
 			
 			$.ajax({
 				type:"POST",
@@ -124,8 +143,9 @@ $(document).ready(function(){
 				}),
 				success: function(result){
 					//en caso de que la modificacion haya sido correcta se mostrará un mensaje y se limpiará el formulario
-					muestrainfo("correcto",result);	
-						
+					muestrainfo("correcto","Datos modificados correctamente");	
+					setTimeout("document.location.href=\"panelusuario.html?username=\"+usuariologueado;", 2000); //esto lo que hace es recargar la pagina a los dos segundos
+	
 					$("#nombre").val("");
 					$("#apellidos").val("");
 					$("#clave").val("");
@@ -136,8 +156,19 @@ $(document).ready(function(){
 				}
 			})
 		})
+		
 		//Cundo se haga click en el botón para eliminar la cuenta
 		$("#btneliminarcuenta").click(function(){
+			var nfilas = 0; //esto se compara con las filas de los alquileres del usuario
+			//Para cada fila del cuerpo de la tabla, se va aumentando el numero de filas que hay en la tabla
+     		$("table tbody tr").each(function() {
+         		nfilas++;
+     		})
+
+			if(nfilas>0){
+				muestrainfo("error","Devuelva las películas antes de darse de baja");
+			}
+			else{
 			var confirmacion=window.confirm("Está a punto de eliminar su cuenta. ¿Está seguro/a de ello?"); //confirmación para eliminar la cuenta
 			
 			//Si se ha pulsado aceptar en la ventana emergente
@@ -157,7 +188,7 @@ $(document).ready(function(){
 						muestrainfo("error","Error durante la operación");	
 					}
 				});
-			}
+			}}
 		})
 		//para volver al listado de películas
 		$("#btnvolver").click(function(){
@@ -167,14 +198,14 @@ $(document).ready(function(){
 
 //Esta función se hace aparte ya que se incrusta en la creación del botón en la tabla de las reservas.
 //Recibe el id de una película, que se corresponde con el id del botón que se pulsa y hace una petición.
-function devolver(idpelicula){
+function devolver(numero_alquiler){
 	$.ajax({
 	    type:"POST",
 		dataType:"html",
 		url: "./ServletDevolucion",
 		data:$.param({
-			id:idpelicula,
 			usuario:usuariologueado,
+			numero_alquiler:numero_alquiler
 		}),
 		success: function(result){
 			setTimeout("document.location.href=\"panelusuario.html?username=\"+usuariologueado;", 2000); //esto lo que hace es recargar la pagina a los dos segundos

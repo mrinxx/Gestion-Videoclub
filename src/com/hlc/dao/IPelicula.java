@@ -6,5 +6,5 @@ public interface IPelicula {
 	public String listarPeliculas(); 
 	public String reservar(String idpelicula, String nombreusuario);
 	public String filtrar(String genero);
-	public String devolver(String idpelicula,String usuario);
+	public String devolver(String usuario,int numero_alquiler);
 }

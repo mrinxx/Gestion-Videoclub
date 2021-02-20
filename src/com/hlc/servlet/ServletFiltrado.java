@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.hlc.dao.PeliculaDAO;
-import com.hlc.dao.UsuarioDAO;
 
 /**
  * Servlet implementation class ServletFiltrado
@@ -36,7 +35,6 @@ public class ServletFiltrado extends HttpServlet {
 		String genero=request.getParameter("genero"); //se coge el genero de la request
 		String ret = pelicula.filtrar(genero); //se llama al método para buscar por ese genero
 		response.setContentType("text/html;charset=UTF-8");
-		System.out.println(ret);
 		PrintWriter out = response.getWriter();
 		out.print(ret); 
 		

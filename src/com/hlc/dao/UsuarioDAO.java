@@ -10,6 +10,7 @@ import com.hlc.connection.DBConnection;
 import com.hlc.vo.Alquiler;
 
 
+
 public class UsuarioDAO implements IUsuario {
 
 	@Override
@@ -60,8 +61,8 @@ public class UsuarioDAO implements IUsuario {
 		String sqlcomprobacionusuario="SELECT * from usuarios"; //Se cojen todos los datos de los usuarios
 		Boolean valido=true; //para ver si el usuario es válido
 		try {
-			Statement stcomprobacionusuario = con.getConnection().createStatement(); 
-			ResultSet rscomprobacionusuario = stcomprobacionusuario.executeQuery(sqlcomprobacionusuario);
+			Statement st = con.getConnection().createStatement(); 
+			ResultSet rscomprobacionusuario = st.executeQuery(sqlcomprobacionusuario);
 			while(rscomprobacionusuario.next()) {
 				String nombre_usu= rscomprobacionusuario.getString("nombreusuario");
 				String correo= rscomprobacionusuario.getString("email");
@@ -69,12 +70,10 @@ public class UsuarioDAO implements IUsuario {
 					valido=false;
 				}
 			}
-			stcomprobacionusuario.close();
 			/*En caso de que el usuario sea válido se procederá a insertarlo en la BD como un nuevo usuario de la aplicación*/
 			if(valido) {
 				String sql ="Insert into usuarios(nombreusuario,clave,nombre,apellidos,email,saldo,premium) VALUES('" +nombreusuario+"','" +clave+"','" +nombre+"','"+apellidos+"','"+email+"',"+saldo+",'"+premium+"')";
-				Statement st = con.getConnection().createStatement(); 
-				ResultSet rs = st.executeQuery(sql);
+				st.executeQuery(sql);
 				st.close();
 				mensaje="ok"; //se establece el mensaje que se va a devolver como ok
 			}else{
@@ -90,15 +89,13 @@ public class UsuarioDAO implements IUsuario {
 			}
 	 }
 
-			
-
 	@Override
 	/*Método para usarse en el momento de ver las reservas de un determinado usuaario en el panel del mismo*/
 	public String verReservas(String nombreusuario) {
 		// TODO Auto-generated method stub
 		Gson json= new Gson(); 
 		DBConnection con = new DBConnection();
-		String sql ="Select * from alquileres alq, peliculas p where alq.pelicula=p.id and alq.usuario LIKE '"+nombreusuario+"'"; //Seleccion de los alquileres relacionados con el usuario 
+		String sql ="Select * from alquileres alq, peliculas p where alq.pelicula=p.id and alq.usuario LIKE '"+nombreusuario+"' order by p.titulo"; //Seleccion de los alquileres relacionados con el usuario 
 		try {
 			
 			ArrayList<Alquiler> datos= new ArrayList<Alquiler>(); //ArrayList que va a almacenar los alquileres del usuario
@@ -108,7 +105,8 @@ public class UsuarioDAO implements IUsuario {
 			
 			//Se cogen los datos necesarios 
 			while(rs.next()) {
-				String id=rs.getString("id");
+				String idpelicula=rs.getString("id");
+				int numero_alquiler=rs.getInt("numero_alquiler");
 				String fecha=rs.getString("fecha_alquiler");
 				String titulo= rs.getString("titulo"); 
 				String genero= rs.getString("genero"); 
@@ -125,7 +123,7 @@ public class UsuarioDAO implements IUsuario {
 				}else if(cadenaestreno.equals("false")) {
 					estreno="No";
 				}
-				Alquiler alquiler=new Alquiler(id,fecha,titulo,genero,estreno); //uso esta clase para poder enviar los datos
+				Alquiler alquiler=new Alquiler(numero_alquiler,idpelicula,fecha,titulo,genero,estreno); //uso esta clase para poder enviar los datos
 				datos.add(alquiler); //añado el alquiler a los datos que se van a devolver
 				
 			}
@@ -182,12 +180,10 @@ public class UsuarioDAO implements IUsuario {
 				premium=premiumbd;
 			}
 			
-			st.close();
 			String sqlmodificacion="Update usuarios SET nombre='"+nombre+"', apellidos='"+apellidos+"',clave='"+clave+"', email='"+email+"', premium='"+premium+"' where nombreusuario LIKE '"+nombreusuario+"'";
-			Statement stmodificacion = con.getConnection().createStatement();
-			stmodificacion.executeQuery(sqlmodificacion); //se modifica el usuario 
-			stmodificacion.close();
-			return "Datos modificados correctamente"; //se devuelve para mostrarse en la web este mensaje
+			st.executeQuery(sqlmodificacion); //se modifica el usuario 
+			st.close();
+			return "OK"; //se devuelve para mostrarse en la web este mensaje
 		}catch(Exception e){
 			return e.getMessage();
 		}finally{
@@ -214,19 +210,27 @@ public class UsuarioDAO implements IUsuario {
 
 	@Override
 	/*Método que se va a usar para comprobar el saldo del usuario que esté logueado nada más entrar en el panel del usuario*/
-	public String comprobarSaldo(String nombreusuario) {
+	public String comprobarDatos(String nombreusuario) {
 		// TODO Auto-generated method stub
 		DBConnection con = new DBConnection();
-		String sql ="SELECT saldo from usuarios where nombreusuario LIKE '"+nombreusuario+"'"; //consulta para obtener el saldo
-		String saldo=""; //almacenará el saldo. Lo hago como un string ya que en el lugar donde se va a visualizar en la web, es un h2 y por lo tanto lo pongo como cadena de texto
+		String sql ="SELECT * from usuarios where nombreusuario LIKE '"+nombreusuario+"'"; //consulta para obtener el saldo
+		String datos="";
 		try {
 			Statement st = con.getConnection().createStatement();
 			ResultSet rs=st.executeQuery(sql);
 			while(rs.next()) {
-				saldo=Float.toString(rs.getFloat("saldo")); //cojo el saldo de la consulta y haco la conversion de float a string
+				String saldo=Float.toString(rs.getFloat("saldo")); //cojo el saldo de la consulta y haco la conversion de float a string
+				String nombre=rs.getString("nombre");
+				String apellidos=rs.getString("apellidos");
+				String clave=rs.getString("clave");
+				String email=rs.getString("email");
+				String premium=rs.getString("premium");
+				
+				datos=nombre+","+apellidos+","+clave+","+email+","+premium+","+saldo; //se almacenan los datos obtenidos en la cadena que se va a devolver
 			}
+						
 			st.close();
-			return saldo; //devuelvo el dato obtenido
+			return datos; //devuelvo todos los datos que se han obtenido
 		}catch(Exception e) {
 			return e.getMessage();
 		}finally {
@@ -247,11 +251,12 @@ public class UsuarioDAO implements IUsuario {
 			Statement st = con.getConnection().createStatement();
 			st.executeQuery(sql);
 			st.close();
-			return "Saldo modificado exitosamente"; //devuelvo el mensaje a mostrar en la web
+			return "OK"; //devuelvo el mensaje a mostrar en la web
 		}catch(Exception e) {
 			return e.getMessage();
 		}finally {
 			con.desconectar();
 			}
-	}	
+	}
+	
 }
